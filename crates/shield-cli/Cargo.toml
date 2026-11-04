@@ -1,0 +1,10 @@
+[package]
+name = "shield-cli"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+description = "SHIELD end-to-end demo / verification CLI: synthetic headset -> L1 session -> L2 sanitize -> grant-checked release -> attestation token -> Merkle receipt."
+
+[dependencies]
+shield-core = { path = "../shield-core" }
+serde_json = "1"

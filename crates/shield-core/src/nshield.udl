@@ -1,0 +1,40 @@
+// REFERENCE ONLY — the source of truth is the #[uniffi::export]
+// proc-macro annotations in ffi.rs. This UDL mirrors the exported
+// surface in the spec's original notation for readers coming from
+// the Layer 0–4 blueprints.
+
+namespace nshield {
+  [Name=ShieldPipelineHandle]
+  ShieldPipelineHandle create_shield_pipeline(f32 epsilon, u32 channel_count);
+
+  [Name=SecureStorageHandle]
+  SecureStorage new_secure_storage_handle();
+
+  [Name=BleProxyHandle]
+  BleProxy new_ble_proxy_handle();
+};
+
+dictionary FfiFeatureVector {
+  u64 timestamp_ms;
+  sequence<f32> band_powers;
+  u32 channel_count;
+};
+
+interface ShieldPipelineHandle {
+  FfiFeatureVector process_slice(sequence<f32> band_powers, u64 timestamp, u32 channel_count);
+  f32 epsilon();
+};
+
+interface BleProxyHandle {
+  constructor();
+  boolean validate_sequence(string characteristic_id, u16 seq);
+  u64 dropped_count();
+};
+
+interface SecureStorageHandle {
+  constructor();
+  [Throws=String]
+  void initialize_encrypted_store(string db_path, sequence<u8> hardware_seed);
+  boolean is_initialized();
+  string? key_fingerprint();
+};

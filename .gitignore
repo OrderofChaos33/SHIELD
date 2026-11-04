@@ -1,0 +1,25 @@
+/target
+**/*.rs.bk
+Cargo.lock.orig
+
+# Sovereignty: nothing personal ever enters this tree
+*.eeg
+*.edf
+*.bdf
+*.fif
+captures/
+recordings/
+*.shield-store
+*.key
+*.pem
+.env
+.DS_Store
+.idea/
+.gradle/
+build/
+DerivedData/
+*.xcuserstate
+circuits/*.ptau
+circuits/*_final.zkey
+circuits/proof.json
+circuits/public.json

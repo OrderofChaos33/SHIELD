@@ -1,0 +1,27 @@
+#!/bin/sh
+# SHIELD Execution Standard §3 — local static gate. No bypass.
+# A red gate means the commit does not happen; fix forward or halt.
+set -e
+cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+
+echo "[gate] fmt"
+cargo fmt --all -- --check
+
+echo "[gate] clippy (deny warnings)"
+cargo clippy --workspace --all-targets -- -D warnings
+
+echo "[gate] tests (unit + integration + properties)"
+PROPTEST_CASES=${PROPTEST_CASES:-1024} cargo test --workspace
+
+echo "[gate] async pipeline tests"
+cargo test -p shield-core --features async-pipeline
+
+echo "[gate] secret scan (staged/working diff vs HEAD)"
+if git rev-parse HEAD >/dev/null 2>&1; then
+  if git diff HEAD -- . | grep -E '^\+' | grep -qiE 'ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----|RAW-EEG|password\s*=\s*"[^"]+"'; then
+    echo "[gate] FAIL: possible secret or real-telemetry marker in diff" >&2
+    exit 1
+  fi
+fi
+
+echo "[gate] all green"

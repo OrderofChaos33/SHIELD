@@ -1,0 +1,45 @@
+[package]
+name = "shield-core"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+description = "SHIELD core: local-first neuro-telemetry defense (BLE proxy, DSP scrambling, adversarial perturbation, encrypted store, Merkle audit, attestation tokens). No network. No raw-data egress API."
+
+[dependencies]
+sha2 = "0.10"
+hmac = "0.12"
+hkdf = "0.12"
+x25519-dalek = { version = "2", features = ["static_secrets"] }
+aes-gcm = "0.10"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+getrandom = "0.2"
+nalgebra = "0.33"
+uniffi = { version = "0.28", features = ["cli"] }
+zeroize = "1"
+hex = "0.4"
+ed25519-dalek = "2"
+
+# Optional radio: desktop/companion-daemon BLE via btleplug.
+btleplug = { version = "0.11", optional = true }
+tokio = { version = "1", features = ["rt", "time", "sync", "macros"], optional = true }
+futures = { version = "0.3", optional = true }
+
+# Optional SQLCipher backend (Layer 0/3). Compiles C SQLCipher; off by default.
+rusqlite = { version = "0.32", features = ["bundled-sqlcipher"], optional = true }
+
+[features]
+default = ["software-keys"]
+# Dev/test only. A release build must use a platform enclave KeyProvider
+# (from_passphrase panics in release profile even with this feature on).
+software-keys = []
+ble-radio = ["dep:btleplug", "dep:tokio", "dep:futures"]
+async-pipeline = ["dep:tokio"]
+sqlcipher-store = ["dep:rusqlite"]
+
+[dev-dependencies]
+proptest = "1"
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
