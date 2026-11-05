@@ -21,6 +21,7 @@ belongs to is tested end-to-end, not when the unit exists.
 - [x] UniFFI proc-macro handles (pipeline / BLE gate / storage) + bindgen binary + UDL reference
 - [x] End-to-end CLI demo + integration test of the full loop
 - [x] Circom circuits written + specified (`circuits/`), incl. v2 fatigue proof with in-circuit Merkle binding
+- [x] Layer 5 Mirrorfield: probe detector (monotonic scoring, enumeration detection), watermarked canary persona, advertisement sanitizer, panic Lockdown / owner clear, mirror service under grant only (INV-L5-01…07, `docs/MIRRORFIELD.md`)
 
 ## Phase 1 — Prove the crypto claims
 

@@ -53,3 +53,21 @@ line here in a commit that also changes code must state its reason.
 | INV-AG-01 | A signed envelope verifies iff unaltered and unexpired; any field tamper fails. | `agent_binding::tests::signed_envelope_verifies_and_tampering_fails`, `expired_envelope_fails` |
 | INV-AG-02 | Ephemeral IDs are equal within (registry, day) and unequal across either dimension. | `agent_binding::tests::ephemeral_ids_rotate_across_registries_and_days_only` |
 | INV-AG-03 | The serialized envelope contains no session/device/user metadata fields, ever. | `agent_binding::tests::envelope_carries_no_session_metadata` |
+
+## Layer 5 — Mirrorfield (active defense, own perimeter only)
+
+Added 2026-11-05 with the Mirrorfield build. Scope is strictly the
+owner's own stack: detection, decoy, hardening, lockdown. No function
+in this layer transmits anything intended to interfere with, disable,
+or degrade another party's device (founder rule, 2026-11-05: never
+break the law, ever).
+
+| ID | Invariant | Enforced by |
+|---|---|---|
+| INV-L5-01 | A canary-characteristic touch always marks the peer Hostile + quarantined, and the probe event is appended to the audit log BEFORE any response is served. | `mirrorfield::tests::canary_touch_quarantines_and_logs_first`, `mirrorfield_loop` |
+| INV-L5-02 | A quarantined peer never receives real sanitized data. NO FREE DATA (founder rule, 2026-11-05): no consumer without an existing `features` grant receives anything at all — mirror features are a degraded service UNDER a grant, never a handout; ungranted peers get `NoGrant` and zero bytes. In Lockdown posture, granted consumers receive mirror features only; ungranted receive nothing. | `mirrorfield::tests::quarantined_peer_gets_mirror_not_real`, `quarantined_without_grant_gets_nothing`, `panic_lockdown_mirrors_everyone`, `mirrorfield_loop` |
+| INV-L5-03 | Mirror features are a pure function of (persona seed, serve counter): identical across different real frames, and the mirror path never reads frame contents. | `mirrorfield::tests::mirror_output_ignores_real_frame`, `properties::mirror_is_frame_independent` |
+| INV-L5-04 | A sanitized advertisement carries no device name, no manufacturer data, and at most the primary service UUID. | `mirrorfield::tests::advertisement_sanitizer_strips_identity` |
+| INV-L5-05 | Persona IDs are equal within an epoch hour and unequal across epochs; canary watermarks are unique per characteristic and stable per persona seed (leak attribution). | `mirrorfield::tests::persona_rotation_and_watermark_stability` |
+| INV-L5-06 | Probe scoring is monotonic: observing additional probe events never lowers a peer's score or verdict. | `mirrorfield::tests::scoring_is_monotonic`, `properties::probe_scores_never_decrease` |
+| INV-L5-07 | Panic enters Lockdown immediately and is audit-logged; Lockdown exits only via explicit owner clear, which is also audit-logged. Probe events alone never exit Lockdown. | `mirrorfield::tests::panic_lockdown_and_owner_clear` |

@@ -19,6 +19,7 @@ pub mod crypto;
 pub mod dsp;
 pub mod ffi;
 pub mod keystore;
+pub mod mirrorfield;
 pub mod perturb;
 pub mod pipeline;
 pub mod prng;
@@ -30,4 +31,8 @@ pub use attest::{AttestationToken, Predicate};
 pub use audit::{AuditEvent, AuditLog, InclusionProof, MerkleAuditLog, Receipt};
 pub use calibration::{CalibrationProfile, EpsilonCalibrator};
 pub use dsp::{FeatureVector, RawFrame};
+pub use mirrorfield::{
+    sanitize_advertisement, Advertisement, Mirrorfield, PeerVerdict, Posture, ProbeAction,
+    ProbeEvent, ProbeKind, MIRROR_EPSILON,
+};
 pub use pipeline::{Grant, ReleasedSlice, Shield, ShieldError};

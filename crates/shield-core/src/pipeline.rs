@@ -95,6 +95,11 @@ impl Shield {
         self.grants.remove(&(app_id.to_string(), scope.to_string()));
     }
 
+    pub fn has_grant(&self, app_id: &str, scope: &str) -> bool {
+        self.grants
+            .contains_key(&(app_id.to_string(), scope.to_string()))
+    }
+
     fn require_grant(&self, app_id: &str, scope: &str) -> Result<(), ShieldError> {
         if self
             .grants

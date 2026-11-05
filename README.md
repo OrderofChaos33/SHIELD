@@ -59,6 +59,14 @@ async variant 56 with `--features async-pipeline`):**
 - Agentic binding: Ed25519-signed attestation envelopes for A2A
   registries with rotating per-registry ephemeral IDs and a tested
   no-session-metadata guarantee.
+- Layer 5 Mirrorfield (`docs/MIRRORFIELD.md`): active defense on our
+  own perimeter only — probe detection with monotonic per-peer
+  scoring, watermarked canary characteristics + decoy persona,
+  advertisement identity-stripping, panic Lockdown with owner-only
+  clear, and mirror service for quarantined consumers. **No free
+  data:** mirror service exists only under an existing grant;
+  ungranted consumers receive nothing in any posture. Nothing in
+  this layer interferes with anyone else's device — ever.
 - UniFFI handles for all of the above (pipeline / BLE gate / storage),
   exercised by unit tests through the same code the shells will call.
 - End-to-end loop: synthetic raw stream → sanitized vector → attestation
