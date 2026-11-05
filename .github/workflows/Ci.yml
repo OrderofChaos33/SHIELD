@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch: # manual: account Actions billing state is the owner's call
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Format check
+        run: cargo fmt --all -- --check
+      - name: Clippy (deny warnings — Execution Standard §3)
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Tests (default features)
+        run: cargo test --workspace
+      - name: Property tests at campaign case count (Execution Standard §2)
+        run: PROPTEST_CASES=4096 cargo test -p shield-core --test properties
+      - name: Tests (async pipeline)
+        run: cargo test -p shield-core --features async-pipeline
+      - name: Feature compile — BLE radio proxy
+        run: |
+          sudo apt-get update && sudo apt-get install -y libdbus-1-dev
+          cargo check -p shield-core --features ble-radio
+      - name: Feature compile — SQLCipher store
+        run: cargo check -p shield-core --features sqlcipher-store
+      - name: End-to-end demo
+        run: cargo run -p shield-cli
